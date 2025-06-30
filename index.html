@@ -32,7 +32,6 @@
       padding: 10px;
       font-size: 16px;
       margin-bottom: 20px;
-      resize: vertical;
     }
     button {
       background-color: #001100;
@@ -73,69 +72,19 @@
   </footer>
 
   <script>
-    // Variants of "and hiop" with visually similar substitutions and zero-width spaces
-    const variants = [
-      // mix of Cyrillic letters and zero-width spaces
-      'аnд hіоp',
-      'а​n​d hіоp', // zero-width spaces between letters
-      'аn​d hіоp',
-      'aпd hіоp',
-      'аnd hіор',
-      'аnd hiоp',
-      'аnd hіоp',
-      'aпd hiоp',
-      'аnd hіоp',
-      'аnd hiоp',
-      'аnd hiоp', 
-      'a​n​d hіоp',
-      'a​n​d h​i​o​p',
-      'аn​d h​і​о​p',
-      'аn­d hіоp',
-      'a​n​d hіоp',
-      'аn­d hіоp',
-      'aпd hiоp',
-      'аn​d hіоp',
-      'аn​d hіоp',
-      'аn​d hіоp',
-      'аnд hiоp',
-      'aпd hіоp',
-      'аnд hіоp',
-      'аnд hiоp',
-      'аnд hiоp',
-      'aпd hiоp',
-      'аnд hiоp',
-      'aпd hiоp',
-      'аnд hiоp',
-    ];
-
-    // helper function: randomly pick a variant but maintain case pattern of original
-    function matchCase(text, pattern) {
-      let result = '';
-      for(let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const p = pattern[i] || '';
-        if (p === p.toUpperCase()) result += c.toUpperCase();
-        else result += c.toLowerCase();
-      }
-      return result;
-    }
-
     function stealthify(text) {
-      return text.replace(/and hiop/gi, (match) => {
-        // Pick a random variant
-        let variant = variants[Math.floor(Math.random() * variants.length)];
-
-        // Apply the original case style
-        if (match === match.toUpperCase()) {
-          variant = variant.toUpperCase();
-        } else if (match[0] === match[0].toUpperCase()) {
-          // Capitalize first letter of variant
-          variant = variant[0].toUpperCase() + variant.slice(1);
-        } else {
-          variant = variant.toLowerCase();
-        }
-
-        return variant;
+      const zeroWidth = '\u200B'; // zero-width space
+      const replacements = {
+        'a': 'а', // Cyrillic a
+        'n': 'n' + zeroWidth,
+        'd': 'd' + zeroWidth,
+        'h': 'h' + zeroWidth,
+        'i': 'і', // Cyrillic i
+        'o': 'о', // Cyrillic o
+        'p': 'р'  // Cyrillic p
+      };
+      return text.replace(/and hiop/gi, match => {
+        return match.toLowerCase().split('').map(c => replacements[c] || c).join('');
       });
     }
 
