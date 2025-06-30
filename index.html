@@ -1,272 +1,149 @@
-# OPERATION AND‑HIOP — MULTI‑PAGE WEBSITE
-
-Below are **all files** for a small multi‑page site:
-* `index.html` — Landing page
-* `generator.html` — Encryption tool
-* `about.html` — Info page
-* `style.css` — Shared styling
-* `stealth.js` — JS logic
-
-Copy each block into a file with the matching name in your Replit or local project.
-
----
-## index.html
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Operation AND‑HIOP | Home</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>TOP SECRET TRANSMISSION</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background-color: #0d0d0d;
+      color: #00ff00;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #ff0000;
+    }
+    .classified {
+      background-color: #220000;
+      padding: 5px 10px;
+      border: 2px dashed #ff0000;
+      display: inline-block;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+    textarea {
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      width: 90%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: vertical;
+    }
+    button {
+      background-color: #001100;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .label {
+      font-size: 16px;
+      margin: 5px;
+      font-style: italic;
+      color: #0f0;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #0f0;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="generator.html">Generator</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
+  <h1>TOP SECRET TRANSMISSION</h1>
+  <div class="classified">CLASSIFIED: OPERATION STEALTH TEXT</div>
 
-  <main>
-    <section class="center">
-      <h1 class="red">TOP SECRET TRANSMISSION</h1>
-      <div class="classified">CLASSIFIED: OPERATION STEALTH TEXT</div>
-      <p>Welcome, operative. Use the navigation to access mission tools.</p>
-    </section>
-  </main>
+  <div class="label">INPUT FIELD — ENTER CIVILIAN PHRASE</div>
+  <textarea id="input" placeholder="Type unencrypted phrase here... (e.g., and hiop detected)"></textarea><br>
+
+  <button onclick="convert()">ENCRYPT MESSAGE</button>
+
+  <div class="label">OUTPUT FIELD — SECURE TRANSMISSION READY</div>
+  <textarea id="output" readonly placeholder="Encrypted phrase will appear here..."></textarea>
 
   <footer>
-    CODE ALPHA‑07: THIS PAGE WILL SELF‑DESTRUCT WHEN YOU CLOSE THE TAB.<br />
-    Built for the And Hiop Resistance Task Force 🫡
+    CODE ALPHA-07: THIS MESSAGE WILL SELF-DESTRUCT IN 5... 4...<br>
+    Operated by the And Hiop Resistance Task Force 🫡
   </footer>
+
+  <script>
+    // Variants of "and hiop" with visually similar substitutions and zero-width spaces
+    const variants = [
+      // mix of Cyrillic letters and zero-width spaces
+      'аnд hіоp',
+      'а​n​d hіоp', // zero-width spaces between letters
+      'аn​d hіоp',
+      'aпd hіоp',
+      'аnd hіор',
+      'аnd hiоp',
+      'аnd hіоp',
+      'aпd hiоp',
+      'аnd hіоp',
+      'аnd hiоp',
+      'аnd hiоp', 
+      'a​n​d hіоp',
+      'a​n​d h​i​o​p',
+      'аn​d h​і​о​p',
+      'аn­d hіоp',
+      'a​n​d hіоp',
+      'аn­d hіоp',
+      'aпd hiоp',
+      'аn​d hіоp',
+      'аn​d hіоp',
+      'аn​d hіоp',
+      'аnд hiоp',
+      'aпd hіоp',
+      'аnд hіоp',
+      'аnд hiоp',
+      'аnд hiоp',
+      'aпd hiоp',
+      'аnд hiоp',
+      'aпd hiоp',
+      'аnд hiоp',
+    ];
+
+    // helper function: randomly pick a variant but maintain case pattern of original
+    function matchCase(text, pattern) {
+      let result = '';
+      for(let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const p = pattern[i] || '';
+        if (p === p.toUpperCase()) result += c.toUpperCase();
+        else result += c.toLowerCase();
+      }
+      return result;
+    }
+
+    function stealthify(text) {
+      return text.replace(/and hiop/gi, (match) => {
+        // Pick a random variant
+        let variant = variants[Math.floor(Math.random() * variants.length)];
+
+        // Apply the original case style
+        if (match === match.toUpperCase()) {
+          variant = variant.toUpperCase();
+        } else if (match[0] === match[0].toUpperCase()) {
+          // Capitalize first letter of variant
+          variant = variant[0].toUpperCase() + variant.slice(1);
+        } else {
+          variant = variant.toLowerCase();
+        }
+
+        return variant;
+      });
+    }
+
+    function convert() {
+      const input = document.getElementById("input").value;
+      const output = stealthify(input);
+      document.getElementById("output").value = output;
+    }
+  </script>
 </body>
 </html>
-```
-
----
-## generator.html
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Operation AND‑HIOP | Generator</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="stealth.js"></script>
-</head>
-<body>
-  <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="generator.html">Generator</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="center">
-      <h2>Encryption Generator</h2>
-      <p>Enter civilian text below and receive an encrypted, mod‑proof version.</p>
-
-      <label class="label" for="input">INPUT FIELD — ENTER CIVILIAN PHRASE</label><br />
-      <textarea id="input" placeholder="Type unencrypted phrase here..."></textarea><br />
-
-      <button id="convertBtn">ENCRYPT MESSAGE</button>
-      <button id="copyBtn">COPY OUTPUT</button>
-
-      <label class="label" for="output">OUTPUT FIELD — SECURE TRANSMISSION READY</label><br />
-      <textarea id="output" readonly placeholder="Encrypted phrase will appear here..."></textarea>
-    </section>
-  </main>
-
-  <footer>
-    Transmission secured. Stay covert.
-  </footer>
-</body>
-</html>
-```
-
----
-## about.html
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Operation AND‑HIOP | About</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="generator.html">Generator</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="center">
-      <h2>About Operation AND‑HIOP</h2>
-      <p>This operation assists resistance members in bypassing basic text‑filters by inserting zero‑width characters and Unicode look‑alikes. Use responsibly and stay covert.</p>
-    </section>
-  </main>
-
-  <footer>
-    Built for the And Hiop Resistance Task Force 🫡
-  </footer>
-</body>
-</html>
-```
-
----
-## style.css
-```css
-:root {
-  --green: #0f0;
-  --red: #f00;
-  --bg: #0d0d0d;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: "Courier New", monospace;
-  background: var(--bg);
-  color: var(--green);
-}
-
-header {
-  position: sticky;
-  top: 0;
-  background: #000;
-  border-bottom: 2px solid var(--green);
-  z-index: 1000;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  padding: 0.75rem 1rem;
-}
-
-nav a {
-  color: var(--green);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav a:hover {
-  color: var(--red);
-}
-
-.center {
-  text-align: center;
-  padding: 60px 20px;
-  max-width: 800px;
-  margin: auto;
-}
-
-h1.red {
-  color: var(--red);
-}
-
-.classified {
-  background: #220000;
-  border: 2px dashed var(--red);
-  padding: 4px 12px;
-  display: inline-block;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-}
-
-textarea {
-  background: #000;
-  color: var(--green);
-  border: 1px solid var(--green);
-  width: 90%;
-  max-width: 600px;
-  height: 120px;
-  padding: 10px;
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-button {
-  background: #001100;
-  color: var(--green);
-  border: 2px solid var(--green);
-  padding: 10px 24px;
-  font-size: 18px;
-  cursor: pointer;
-  margin: 6px;
-}
-
-.label {
-  font-size: 16px;
-  font-style: italic;
-  color: var(--green);
-}
-
-footer {
-  text-align: center;
-  font-size: 0.9rem;
-  padding: 30px 10px;
-  border-top: 2px solid var(--green);
-}
-```
-
----
-## stealth.js
-```javascript
-function stealthify(text) {
-  const zw = "\u200B";
-  const repl = {
-    a: "а", // Cyrillic a
-    n: "n" + zw,
-    d: "d" + zw,
-    h: "h" + zw,
-    i: "і", // Cyrillic i
-    o: "о", // Cyrillic o
-    p: "р", // Cyrillic p
-  };
-  return text.replace(/and hiop/gi, (m) =>
-    m
-      .toLowerCase()
-      .split("")
-      .map((c) => repl[c] || c)
-      .join("")
-  );
-}
-
-function convert() {
-  const input = document.getElementById("input").value;
-  document.getElementById("output").value = stealthify(input);
-}
-
-function copyOutput() {
-  const o = document.getElementById("output");
-  if (!o.value) return;
-  o.select();
-  document.execCommand("copy");
-  const btn = document.getElementById("copyBtn");
-  btn.textContent = "COPIED!";
-  setTimeout(() => (btn.textContent = "COPY OUTPUT"), 1500);
-}
-
-// Attach events on DOM ready (only on generator.html)
-window.addEventListener("DOMContentLoaded", () => {
-  const convertBtn = document.getElementById("convertBtn");
-  const copyBtn = document.getElementById("copyBtn");
-  if (convertBtn) convertBtn.addEventListener("click", convert);
-  if (copyBtn) copyBtn.addEventListener("click", copyOutput);
-});
-```
-
----
-**Deployment tip:** put all five files in the same folder on Replit or GitHub Pages and open `index.html`. The nav links will switch pages instantly.
