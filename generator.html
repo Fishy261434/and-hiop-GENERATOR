@@ -6,31 +6,96 @@
   <title>And Hiop Generator</title>
   <style>
     body {
-      background-color:#0d0d0d; color:#0f0; font-family:"Courier New",monospace;
-      text-align:center; padding:40px;
+      background-color: #0d0d0d;
+      color: #00ff00;
+      font-family: "Courier New", monospace;
+      text-align: center;
+      padding: 40px;
     }
-    h1 {font-size:28px;color:#f00;margin-bottom:10px}
-    .classified{background:#220000;border:2px dashed #f00;padding:5px 10px;
-      font-weight:bold;margin-bottom:30px;display:inline-block}
-    textarea{background:#000;color:#0f0;border:1px solid #0f0;width:90%;height:120px;
-      font-size:16px;padding:10px;margin-bottom:20px;resize:vertical}
-    button{background:#001100;color:#0f0;border:2px solid #0f0;padding:10px 20px;
-      font-size:18px;margin:0 4px 15px;cursor:pointer}
-    button:hover{background:#003300}
-    #usage-info{font-weight:bold;margin-bottom:20px}
-    .label{font-style:italic;margin:5px}
-    footer{margin-top:30px;font-size:14px}
+    h1 {
+      font-size: 28px;
+      color: #ff0000;
+      margin-bottom: 10px;
+    }
+    .classified {
+      background-color: #220000;
+      padding: 5px 10px;
+      border: 2px dashed #ff0000;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    #news-box {
+      border: 1px dashed #00ff00;
+      background-color: #000;
+      padding: 10px;
+      margin: 20px auto 30px;
+      width: 90%;
+      max-width: 800px;
+      text-align: left;
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    textarea {
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      width: 90%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: vertical;
+    }
+    button {
+      background-color: #001100;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003300;
+    }
+    #usage-info {
+      font-family: monospace;
+      color: #00ff00;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .label {
+      font-size: 16px;
+      margin: 5px;
+      font-style: italic;
+      color: #0f0;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #0f0;
+    }
   </style>
 </head>
 <body>
   <h1>AND HIOP GENERATOR</h1>
   <div class="classified">CLASSIFIED ENCRYPTION INTERFACE</div>
 
+  <div id="news-box">
+    <strong>📢 News:</strong><br>
+    - Unicode variants added (5,000 total!)<br>
+    - Usage count now saves between sessions<br>
+    - Reset button added<br>
+    - More stealth features coming soon...
+  </div>
+
   <div class="label">INPUT</div>
   <textarea id="input" placeholder="Type something with 'and hiop' in it..."></textarea><br>
 
   <button onclick="convert()">ENCRYPT</button>
-  <button onclick="resetUsage()">RESET&nbsp;USAGE</button>
+  <button onclick="resetUsage()">RESET USAGE</button>
 
   <div id="usage-info">Variants used: 0 / 5000</div>
 
@@ -38,110 +103,88 @@
   <textarea id="output" readonly placeholder="Result will appear here..."></textarea>
 
   <footer>
-    Stealth variant pool: 5 000 unique disguises • Refresh page to reset
+    Stealth variant pool: 5,000 unique disguises • Refresh page to reset
   </footer>
 
-<script>
-/* ---------- CONFIG ---------- */
-const POOL_SIZE   = 5000;
-const STORAGE_KEY = 'andHiopVariantIndex';
-const ZW          = '\u200B';  // zero‑width space
-const NBSP        = '\u00A0';  // non‑breaking space
+  <script>
+    const POOL_SIZE = 5000;
+    const STORAGE_KEY = 'andHiopVariantIndex';
+    const ZW = '\u200B';
+    const NBSP = '\u00A0';
 
-/* ---------- HOMOGLYPHS ---------- */
-const charVariants = {
-  a: [
-    'a', 'а',            // Latin, Cyrillic
-    'α',                 // Greek alpha
-    '𝐚', '𝚊', 'ａ'       // math bold, monospace, full‑width
-  ],
-  n: [
-    'n', 'п',            // Latin, Cyrillic pe
-    '𝗻', '𝚗', 'ｎ',      // bold (maybe thicker), monospace, full‑width
-    'n'+ZW, 'n'+NBSP
-  ],
-  d: [
-    'd', 'д',            // Latin, Cyrillic de
-    '𝐝', '𝚍', 'ｄ',      // bold, monospace, full‑width
-    'd'+ZW, 'd'+NBSP
-  ],
-  ' ': [' ', ZW, NBSP],  // normal, zero‑width, non‑breaking
-  h: [
-    'h', 'һ',            // Latin, Cyrillic shha
-    '𝐡', '𝚑', 'ｈ',
-    'h'+ZW, 'h'+NBSP
-  ],
-  i: [
-    'i', 'і',            // Latin, Cyrillic i
-    'ι',                 // Greek iota
-    '𝐢', '𝚒', 'ｉ',
-    'i'+ZW, 'i'+NBSP
-  ],
-  o: [
-    'o', 'о',            // Latin, Cyrillic o
-    'ο',                 // Greek omicron
-    '𝐨', '𝚘', 'ｏ',
-    'o'+ZW, 'o'+NBSP
-  ],
-  p: [
-    'p', 'р',            // Latin, Cyrillic er
-    '𝐩', '𝚙', 'ｐ',
-    'p'+ZW, 'p'+NBSP
-  ]
-};
+    const charVariants = {
+      a: ['a', 'а', 'α', '𝐚', '𝚊', 'ａ'],
+      n: ['n', 'п', '𝗻', '𝚗', 'ｎ', 'n'+ZW, 'n'+NBSP],
+      d: ['d', 'д', '𝐝', '𝚍', 'ｄ', 'd'+ZW, 'd'+NBSP],
+      ' ': [' ', ZW, NBSP],
+      h: ['h', 'һ', '𝐡', '𝚑', 'ｈ', 'h'+ZW, 'h'+NBSP],
+      i: ['i', 'і', 'ι', '𝐢', '𝚒', 'ｉ', 'i'+ZW, 'i'+NBSP],
+      o: ['o', 'о', 'ο', '𝐨', '𝚨', 'ｏ', 'o'+ZW, 'o'+NBSP],
+      p: ['p', 'р', '𝐩', '𝚙', 'ｐ', 'p'+ZW, 'p'+NBSP]
+    };
 
-/* ---------- POOL BUILD ---------- */
-function cartesian(current, keys, out){
-  if(current.length===keys.length){ out.push(current.join('')); return; }
-  const key = keys[current.length];
-  for(const choice of charVariants[key]) cartesian([...current,choice],keys,out);
-}
-function buildVariantPool(size){
-  const all=[]; cartesian([],['a','n','d',' ','h','i','o','p'],all);
-  for(let i=all.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
-  return all.slice(0,size);
-}
-const VARIANTS = buildVariantPool(POOL_SIZE);
+    function cartesian(current, keys, out) {
+      if (current.length === keys.length) {
+        out.push(current.join(""));
+        return;
+      }
+      const key = keys[current.length];
+      for (const choice of charVariants[key]) {
+        cartesian([...current, choice], keys, out);
+      }
+    }
 
-/* ---------- STATE ---------- */
-let variantIndex = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
+    function buildVariantPool(size) {
+      const all = [];
+      cartesian([], ['a', 'n', 'd', ' ', 'h', 'i', 'o', 'p'], all);
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
+      }
+      return all.slice(0, size);
+    }
 
-/* ---------- HELPERS ---------- */
-function applyCase(sample, variant){
-  if(sample===sample.toUpperCase()) return variant.toUpperCase();
-  if(sample[0]===sample[0].toUpperCase()) return variant[0].toUpperCase()+variant.slice(1);
-  return variant.toLowerCase();
-}
-function updateUsage(){
-  document.getElementById('usage-info').textContent =
-    `Variants used: ${variantIndex} / ${POOL_SIZE}`;
-}
+    const VARIANTS = buildVariantPool(POOL_SIZE);
+    let variantIndex = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
 
-/* ---------- CORE ---------- */
-function stealthify(text){
-  return text.replace(/and hiop/gi, match=>{
-    if(variantIndex>=POOL_SIZE) return match;          // out of ammo
-    const obf = applyCase(match, VARIANTS[variantIndex]);
-    variantIndex++;
-    localStorage.setItem(STORAGE_KEY, variantIndex);   // persist
+    function applyCasePattern(sample, variant) {
+      if (sample === sample.toUpperCase()) return variant.toUpperCase();
+      if (sample[0] === sample[0].toUpperCase())
+        return variant[0].toUpperCase() + variant.slice(1);
+      return variant.toLowerCase();
+    }
+
+    function updateUsage() {
+      document.getElementById("usage-info").textContent =
+        `Variants used: ${variantIndex} / ${POOL_SIZE}`;
+    }
+
+    function stealthify(text) {
+      return text.replace(/and hiop/gi, (match) => {
+        if (variantIndex >= VARIANTS.length) return match;
+        const obf = applyCasePattern(match, VARIANTS[variantIndex]);
+        variantIndex++;
+        localStorage.setItem(STORAGE_KEY, variantIndex);
+        updateUsage();
+        return obf;
+      });
+    }
+
+    function convert() {
+      const input = document.getElementById("input").value;
+      const output = stealthify(input);
+      document.getElementById("output").value = output;
+      updateUsage();
+    }
+
+    function resetUsage() {
+      variantIndex = 0;
+      localStorage.removeItem(STORAGE_KEY);
+      updateUsage();
+      alert("Usage counter reset. Pool is fresh!");
+    }
+
     updateUsage();
-    return obf;
-  });
-}
-function convert(){
-  document.getElementById('output').value =
-    stealthify(document.getElementById('input').value);
-  updateUsage();
-}
-function resetUsage(){
-  variantIndex = 0;
-  localStorage.removeItem(STORAGE_KEY);
-  updateUsage();
-  alert('Usage counter reset. Pool is fresh!');
-}
-
-/* ---------- INIT ---------- */
-updateUsage();
-</script>
+  </script>
 </body>
 </html>
