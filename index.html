@@ -1,68 +1,136 @@
-<script>
-/* ----------  CONFIG  ---------- */
-// How many different variants you want in the pool
-const POOL_SIZE = 1000;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AND HIOP GENERATOR</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background-color: #0d0d0d;
+      color: #00ff00;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #ff0000;
+    }
+    .classified {
+      background-color: #220000;
+      padding: 5px 10px;
+      border: 2px dashed #ff0000;
+      display: inline-block;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+    textarea {
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      width: 90%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #001100;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .label {
+      font-size: 16px;
+      margin: 5px;
+      font-style: italic;
+      color: #0f0;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>AND HIOP GENERATOR</h1>
+  <div class="classified">CLASSIFIED ENCRYPTION INTERFACE</div>
 
-/* ----------  HOMOGLYPHS & ZERO‑WIDTHS  ---------- */
-const ZW = "\u200B";                   // zero‑width space
-const charVariants = {
-  a: ["a", "а"],                      // Latin a, Cyrillic a
-  n: ["n", "п", "n" + ZW],            // Latin n, Cyrillic pe, n+ZW
-  d: ["d", "д", "d" + ZW],            // Latin d, Cyrillic de, d+ZW
-  " ": [" ", ZW],                     // real space or ZW (glues words)
-  h: ["h", "һ", "h" + ZW],            // Latin h, Cyrillic shha, h+ZW
-  i: ["i", "і", "i" + ZW],            // Latin i, Cyrillic i, i+ZW
-  o: ["o", "о", "o" + ZW],            // Latin o, Cyrillic o, o+ZW
-  p: ["p", "р", "p" + ZW]             // Latin p, Cyrillic er, p+ZW
-};
+  <div class="label">INPUT</div>
+  <textarea id="input" placeholder="Type something with 'and hiop' in it..."></textarea><br>
 
-/* ----------  BUILD THE VARIANT POOL  ---------- */
-function cartesian(current, keys, out) {
-  if (current.length === keys.length) {
-    out.push(current.join(""));
-    return;
-  }
-  const key = keys[current.length];
-  for (const choice of charVariants[key]) {
-    cartesian([...current, choice], keys, out);
-  }
-}
+  <button onclick="convert()">ENCRYPT</button>
 
-function buildVariantPool(size) {
-  const all = [];
-  cartesian([], ["a","n","d"," ","h","i","o","p"], all);
-  // Shuffle with Fisher‑Yates
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]];
-  }
-  return all.slice(0, size);
-}
+  <div class="label">OUTPUT</div>
+  <textarea id="output" readonly placeholder="Result will appear here..."></textarea>
 
-const VARIANTS = buildVariantPool(POOL_SIZE);  // array holding 1 000 uniques
-let variantIndex = 0;                          // pointer to “next” unused item
+  <footer>
+    Stealth variant pool: 1,000 unique disguises • Refresh page to reset
+  </footer>
 
-/* ----------  CORE STEALTHIFY ---------- */
-function applyCasePattern(sample, variant) {
-  if (sample === sample.toUpperCase()) return variant.toUpperCase();
-  if (sample[0] === sample[0].toUpperCase())
-    return variant[0].toUpperCase() + variant.slice(1);
-  return variant.toLowerCase();
-}
+  <!-- PLACE THE SCRIPT HERE! -->
+  <script>
+    const POOL_SIZE = 1000;
+    const ZW = "\u200B";
+    const charVariants = {
+      a: ["a", "а"],
+      n: ["n", "п", "n" + ZW],
+      d: ["d", "д", "d" + ZW],
+      " ": [" ", ZW],
+      h: ["h", "һ", "h" + ZW],
+      i: ["i", "і", "i" + ZW],
+      o: ["o", "о", "o" + ZW],
+      p: ["p", "р", "p" + ZW]
+    };
 
-function stealthify(text) {
-  return text.replace(/and hiop/gi, (match) => {
-    // Out of variants?  Return original so user notices.
-    if (variantIndex >= VARIANTS.length) return match;
-    const obf = applyCasePattern(match, VARIANTS[variantIndex]);
-    variantIndex++;            // burn this variant – never reused this session
-    return obf;
-  });
-}
+    function cartesian(current, keys, out) {
+      if (current.length === keys.length) {
+        out.push(current.join(""));
+        return;
+      }
+      const key = keys[current.length];
+      for (const choice of charVariants[key]) {
+        cartesian([...current, choice], keys, out);
+      }
+    }
 
-function convert() {
-  const input = document.getElementById("input").value;
-  const output = stealthify(input);
-  document.getElementById("output").value = output;
-}
-</script>
+    function buildVariantPool(size) {
+      const all = [];
+      cartesian([], ["a","n","d"," ","h","i","o","p"], all);
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
+      }
+      return all.slice(0, size);
+    }
+
+    const VARIANTS = buildVariantPool(POOL_SIZE);
+    let variantIndex = 0;
+
+    function applyCasePattern(sample, variant) {
+      if (sample === sample.toUpperCase()) return variant.toUpperCase();
+      if (sample[0] === sample[0].toUpperCase())
+        return variant[0].toUpperCase() + variant.slice(1);
+      return variant.toLowerCase();
+    }
+
+    function stealthify(text) {
+      return text.replace(/and hiop/gi, (match) => {
+        if (variantIndex >= VARIANTS.length) return match;
+        const obf = applyCasePattern(match, VARIANTS[variantIndex]);
+        variantIndex++;
+        return obf;
+      });
+    }
+
+    function convert() {
+      const input = document.getElementById("input").value;
+      const output = stealthify(input);
+      document.getElementById("output").value = output;
+    }
+  </script>
+</body>
+</html>
+
